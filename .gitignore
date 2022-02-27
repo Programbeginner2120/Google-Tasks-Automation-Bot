@@ -1,0 +1,7 @@
+/__pycache__
+/.vscode
+/client-secret-file.json
+/daily-tasks-body.json
+/special-weekly-tasks-body.json
+/token_tasks_v1.pickle
+/weekly-tasks-body.json
