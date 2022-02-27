@@ -11,6 +11,10 @@ SCOPES = ['https://www.googleapis.com/auth/tasks']
 service = service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 
 def get_month_day_year_time():
+    """
+    Function used to get the current date in month/day/year format
+    @return: the current date in the format specified
+    """
     current_date = datetime.date.today()
     current_date = current_date.strftime("%m/%d/%y")
     return current_date
@@ -18,6 +22,9 @@ def get_month_day_year_time():
 @repeat(every().sunday.at("20:00"))
 #@repeat(every(2).seconds)
 def create_weekly_daily_task_list():
+    """
+    Weekly recurring event that constructs a new daily task list for the specified week
+    """
     tasklist_info = service.tasklists().insert(
         body={'title': f'Daily Task Lists Week of {get_month_day_year_time()}'}
     ).execute()
@@ -25,12 +32,21 @@ def create_weekly_daily_task_list():
 
 
 def get_body(path_to_body: str):
+    """
+    Function used to access JSON file contents used in constructing tasklist and task bodies
+    @param path_to_body, a path to the location of the JSON file
+    @return data, the loaded JSON data
+    """
     with open(path_to_body, 'r') as f:
         data = json.load(f)
     return data
 
 
 def create_weekly_tasks(tasklist_id: str):
+    """
+    Function used for creating weekly tasks and subtasks
+    @param tasklist_id, the ID for the tasklist that contains the tasks
+    """
     week_data = get_body('weekly-tasks-body.json')
     day_dict = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday', 3: 'Thursday', 4: 'Friday', 
     5: 'Saturday', 6: 'Sunday'}
@@ -52,6 +68,10 @@ def create_weekly_tasks(tasklist_id: str):
 
 
 def create_special_weekly_tasks(tasklist_id: str):
+    """
+    Function used to create 'special weekly tasks', or long-term tasks that I want to accomplish
+    throughout the week
+    @param tasklist_id, the ID for the tasklist that contains the tasks"""
     special_week_data = get_body('special-weekly-tasks-body.json')
     prev_key = None
     for task in special_week_data:
@@ -59,6 +79,10 @@ def create_special_weekly_tasks(tasklist_id: str):
 
 
 def create_daily_tasks(tasklist_id: str, task_id: str):
+    """Function used to create daily tasks (subtasks)
+    @param tasklist_id, the ID for the tasklist that contains the tasks
+    @param task_id, the ID parent task of the subtasks
+    """
     day_data = get_body('daily-tasks-body.json')
     prev_key = None
     for task in day_data:
@@ -66,6 +90,13 @@ def create_daily_tasks(tasklist_id: str, task_id: str):
 
 
 def create_task(tasklist_id: str, task_body: dict, task_id: str=None, prev_key: str=None):
+    """Function used to create tasks
+    @param tasklist_id, the ID for the tasklist that contains the task
+    @oaram task_body, body contents of the task
+    @param task_id, ID of parent task (applicable only if subtask)
+    @param prev_key, key of task which comes before current task
+    @return task_info.get('id'), the ID of the generated task
+    """
     task_info = service.tasks().insert(
             tasklist=tasklist_id,
             body={
@@ -81,6 +112,7 @@ def create_task(tasklist_id: str, task_body: dict, task_id: str=None, prev_key: 
     return task_info.get('id')
 
 
+# While loop used to run the process on a rolling basis
 while True:
     run_pending()
 
