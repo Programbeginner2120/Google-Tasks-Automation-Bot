@@ -8,7 +8,7 @@ API_NAME = 'tasks'
 API_VERSION = 'v1'
 SCOPES = ['https://www.googleapis.com/auth/tasks']
 
-service = service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 
 def get_month_day_year_time():
     """
@@ -116,6 +116,7 @@ def create_task(tasklist_id: str, task_body: dict, task_id: str=None, prev_key: 
 while True:
     run_pending()
 
+#TODO: CREATE FUNCTIONALITY WHEREIN YOU CAN REFRESH ACCESS BEFORE IT EXPIRES
 
 
 
