@@ -1,4 +1,4 @@
-from Google import Create_Service
+from Google import Create_Service, restore_oauth_creds
 from schedule import every, repeat, run_pending
 import datetime
 import json
@@ -9,6 +9,7 @@ API_VERSION = 'v1'
 SCOPES = ['https://www.googleapis.com/auth/tasks']
 
 service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+restore_oauth_creds()
 
 def get_month_day_year_time():
     """
@@ -20,7 +21,7 @@ def get_month_day_year_time():
     return current_date
 
 @repeat(every().sunday.at("20:00"))
-#@repeat(every(2).seconds)
+# @repeat(every(10).seconds)
 def create_weekly_daily_task_list():
     """
     Weekly recurring event that constructs a new daily task list for the specified week
@@ -112,11 +113,13 @@ def create_task(tasklist_id: str, task_body: dict, task_id: str=None, prev_key: 
     return task_info.get('id')
 
 
-# While loop used to run the process on a rolling basis
-while True:
-    run_pending()
+def main():
+    # While loop used to run the process on a rolling basis
+    while True:
+        run_pending()
 
-#TODO: CREATE FUNCTIONALITY WHEREIN YOU CAN REFRESH ACCESS BEFORE IT EXPIRES
+if __name__ == "__main__":
+    main()
 
 
 

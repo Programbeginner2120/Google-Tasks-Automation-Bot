@@ -3,15 +3,18 @@ import os
 from google_auth_oauthlib.flow import Flow, InstalledAppFlow
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
+from schedule import every, repeat, run_pending
+import logging
+import Thread
 
+logging.basicConfig(filename='bot_logging.log', encoding='utf-8', level=logging.DEBUG)
+thread = None
 
 def Create_Service(client_secret_file, api_name, api_version, *scopes):
-    print(client_secret_file, api_name, api_version, scopes, sep='-')
     CLIENT_SECRET_FILE = client_secret_file
     API_SERVICE_NAME = api_name
     API_VERSION = api_version
     SCOPES = [scope for scope in scopes[0]]
-    print(SCOPES)
 
     cred = None
 
@@ -43,4 +46,31 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
         os.remove(pickle_file)
         return None
 
-        
+@repeat(every().day.at("00:00"))
+#@repeat(every(2).seconds)
+def restore_oauth_creds():
+    CLIENT_SECRET_FILE = 'client-secret-file.json'
+    API_NAME = 'tasks'
+    API_VERSION = 'v1'
+    SCOPES = ['https://www.googleapis.com/auth/tasks']
+
+    cred = None
+
+    pickle_file = f'token_{API_NAME}_{API_VERSION}.pickle'
+
+    if os.path.exists(pickle_file):
+        with open(pickle_file, 'rb') as token:
+            cred = pickle.load(token)
+            print(cred)
+        if not cred.expired and cred.refresh_token:
+            cred.refresh(Request())
+            with open(pickle_file, 'wb') as token:
+                pickle.dump(cred, token)
+    else:
+        logging.debug("Failed to refresh auth token for some reason.")
+
+    if not thread:
+        sched_thread = Thread.thread("scheduler thread", "1", run_pending)
+        sched_thread.start()
+
+
