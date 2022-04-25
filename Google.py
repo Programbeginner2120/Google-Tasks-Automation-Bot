@@ -23,7 +23,6 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
     if os.path.exists(pickle_file):
         with open(pickle_file, 'rb') as token:
             cred = pickle.load(token)
-            print(cred)
 
     if not cred or not cred.valid:
         if cred and cred.expired and cred.refresh_token:
@@ -61,7 +60,6 @@ def restore_oauth_creds():
     if os.path.exists(pickle_file):
         with open(pickle_file, 'rb') as token:
             cred = pickle.load(token)
-            print(cred)
         if not cred.expired and cred.refresh_token:
             cred.refresh(Request())
             with open(pickle_file, 'wb') as token:
