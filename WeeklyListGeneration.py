@@ -21,7 +21,6 @@ def get_month_day_year_time():
     return current_date
 
 @repeat(every().sunday.at("20:00"))
-# @repeat(every(10).seconds)
 def create_weekly_daily_task_list():
     """
     Weekly recurring event that constructs a new daily task list for the specified week

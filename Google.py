@@ -46,7 +46,7 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
         return None
 
 @repeat(every().day.at("00:00"))
-#@repeat(every(2).seconds)
+# @repeat(every(2).seconds)
 def restore_oauth_creds():
     CLIENT_SECRET_FILE = 'client-secret-file.json'
     API_NAME = 'tasks'
@@ -69,6 +69,7 @@ def restore_oauth_creds():
 
     if not thread:
         sched_thread = Thread.thread("scheduler thread", "1", run_pending)
+        print(vars(sched_thread))
         sched_thread.start()
 
 
