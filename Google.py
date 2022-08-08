@@ -60,12 +60,16 @@ def restore_oauth_creds():
     if os.path.exists(pickle_file):
         with open(pickle_file, 'rb') as token:
             cred = pickle.load(token)
+        if cred.expired:
+            logging.debug("Deleting expired pickle file...")
+            os.remove(os.path.join(os.getcwd(), pickle_file))
         if not cred.expired and cred.refresh_token:
             cred.refresh(Request())
             with open(pickle_file, 'wb') as token:
                 pickle.dump(cred, token)
     else:
         logging.debug("Failed to refresh auth token for some reason.")
+        
 
     if not thread:
         sched_thread = Thread.thread("scheduler thread", "1", run_pending)
