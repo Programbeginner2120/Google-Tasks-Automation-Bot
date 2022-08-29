@@ -8,8 +8,9 @@ API_NAME = 'tasks'
 API_VERSION = 'v1'
 SCOPES = ['https://www.googleapis.com/auth/tasks']
 
-service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 restore_oauth_creds()
+service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+
 
 def get_month_day_year_time():
     """
