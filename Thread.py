@@ -6,8 +6,9 @@ class thread(threading.Thread):
         threading.Thread.__init__(self)
         self.thread_name = thread_name
         self.thread_ID = thread_ID
+        self.thread_args = thread_args
 
-        def run():
-            self.thread_args[0]()
+    def run(self):
+        self.thread_args[0]()
             
         
