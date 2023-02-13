@@ -1,6 +1,6 @@
 import pickle
 import os
-from google_auth_oauthlib.flow import Flow, InstalledAppFlow
+from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from schedule import every, repeat, run_pending
@@ -40,8 +40,8 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
         print(API_SERVICE_NAME, 'service created successfully')
         return service
     except Exception as e:
-        print(e)
-        print(f'Failed to create service instance for {API_SERVICE_NAME}')
+        logging.error(e.__str__, e)
+        logging.error(f'Failed to create service instance for {API_SERVICE_NAME}')
         os.remove(pickle_file)
         return None
 
@@ -67,13 +67,15 @@ def restore_oauth_creds():
             cred.refresh(Request())
             with open(pickle_file, 'wb') as token:
                 pickle.dump(cred, token)
+            logging.debug(f"{pickle_file} refreshed!")
+                
     else:
-        logging.debug("Failed to refresh auth token for some reason.")
+        logging.error("Failed to refresh auth token for some reason.")
         
 
     if not thread:
         sched_thread = Thread.thread("scheduler thread", "1", run_pending)
-        print(vars(sched_thread))
         sched_thread.start()
+        sched_thread.join()
 
 

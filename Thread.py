@@ -1,4 +1,5 @@
 import threading
+import time
 
 class thread(threading.Thread):
     def __init__(self, thread_name, thread_ID, *thread_args):
@@ -8,3 +9,5 @@ class thread(threading.Thread):
 
         def run():
             self.thread_args[0]()
+            
+        
