@@ -1,5 +1,9 @@
-/__pycache__
 /.vscode
+
 /json/*
 /creds/*
 /logging/*
+
+**/__pycache__
+
+!**README.md
