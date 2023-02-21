@@ -7,7 +7,7 @@ from schedule import every, repeat, run_pending
 import logging
 import Thread
 
-logging.basicConfig(filename='bot_logging.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='./logging/bot_logging.log', encoding='utf-8', level=logging.DEBUG)
 thread = None
 
 def Create_Service(client_secret_file, api_name, api_version, *scopes):
@@ -18,7 +18,7 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
 
     cred = None
 
-    pickle_file = f'token_{API_SERVICE_NAME}_{API_VERSION}.pickle'
+    pickle_file = f'./creds/token_{API_SERVICE_NAME}_{API_VERSION}.pickle'
 
     if os.path.exists(pickle_file):
         with open(pickle_file, 'rb') as token:
@@ -48,14 +48,14 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
 @repeat(every().day.at("00:00"))
 # @repeat(every(2).seconds)
 def restore_oauth_creds():
-    CLIENT_SECRET_FILE = 'client-secret-file.json'
+    CLIENT_SECRET_FILE = './creds/client-secret-file.json'
     API_NAME = 'tasks'
     API_VERSION = 'v1'
     SCOPES = ['https://www.googleapis.com/auth/tasks']
 
     cred = None
 
-    pickle_file = f'token_{API_NAME}_{API_VERSION}.pickle'
+    pickle_file = f'./creds/token_{API_NAME}_{API_VERSION}.pickle'
 
     if os.path.exists(pickle_file):
         with open(pickle_file, 'rb') as token:
