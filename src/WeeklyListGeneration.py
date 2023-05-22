@@ -22,6 +22,7 @@ def get_month_day_year_time():
     return current_date
 
 @repeat(every().sunday.at("20:00"))
+# @repeat(every(2).seconds)
 def create_weekly_daily_task_list():
     """
     Weekly recurring event that constructs a new daily task list for the specified week
@@ -48,10 +49,9 @@ def create_weekly_tasks(tasklist_id: str):
     Function used for creating weekly tasks and subtasks
     @param tasklist_id, the ID for the tasklist that contains the tasks
     """
-    week_data = get_body('./json/weekly-tasks-body.json')
+    week_data = get_body('./json/daily-tasks-status-files/daily-tasks-status-body.json')
     day_dict = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday', 3: 'Thursday', 4: 'Friday', 
     5: 'Saturday', 6: 'Sunday'}
-    day_info = None
     for num in day_dict.keys():
         day_info = service.tasks().insert(
             tasklist=tasklist_id,
@@ -62,7 +62,7 @@ def create_weekly_tasks(tasklist_id: str):
                 'deleted': week_data.get('deleted') if week_data.get('deleted') else None,
                 'status': week_data.get('status') if week_data.get('status') else None
             },
-            previous = None if not day_info else day_info.get('id')
+            previous = None # if not day_info else day_info.get('id')
         ).execute()
         create_daily_tasks(tasklist_id, day_info.get('id'))
     create_special_weekly_tasks(tasklist_id)
@@ -73,10 +73,9 @@ def create_special_weekly_tasks(tasklist_id: str):
     Function used to create 'special weekly tasks', or long-term tasks that I want to accomplish
     throughout the week
     @param tasklist_id, the ID for the tasklist that contains the tasks"""
-    special_week_data = get_body('./json/special-weekly-tasks-body.json')
-    prev_key = None
+    special_week_data = get_body('./json/special-tasks-files/special-weekly-tasks-list.json')
     for task in special_week_data:
-        prev_key = create_task(tasklist_id, special_week_data[task], prev_key=prev_key)
+        prev_key = create_task(tasklist_id, special_week_data[task], None)
 
 
 def create_daily_tasks(tasklist_id: str, task_id: str):
@@ -84,10 +83,9 @@ def create_daily_tasks(tasklist_id: str, task_id: str):
     @param tasklist_id, the ID for the tasklist that contains the tasks
     @param task_id, the ID parent task of the subtasks
     """
-    day_data = get_body('./json/daily-tasks-body.json')
-    prev_key = None
+    day_data = get_body('./json/daily-tasks-files/daily-tasks-list.json')
     for task in day_data:
-        prev_key = create_task(tasklist_id, day_data[task], task_id, prev_key)
+        prev_key = create_task(tasklist_id, day_data[task], task_id, None)
 
 
 def create_task(tasklist_id: str, task_body: dict, task_id: str=None, prev_key: str=None):
