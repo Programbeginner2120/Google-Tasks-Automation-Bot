@@ -18,6 +18,7 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
 
     pickle_file = f'./creds/token_{API_SERVICE_NAME}_{API_VERSION}.pickle'
 
+    cred = None
     if os.path.exists(pickle_file):
         with open(pickle_file, 'rb') as token:
             cred = pickle.load(token)
@@ -43,8 +44,8 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
         os.remove(pickle_file)
         return None
 
-# @repeat(every().day.at("00:00"))
-@repeat(every(2).seconds)
+@repeat(every().day.at("00:00"))
+# @repeat(every(2).seconds)
 def restore_oauth_creds():
     CLIENT_SECRET_FILE = './creds/client-secret-file.json'
     API_NAME = 'tasks'
@@ -70,8 +71,8 @@ def restore_oauth_creds():
     else:
         logging.error("Failed to refresh auth token for some reason.")
         
-    thread = Thread.thread("scheduler thread", "1", restore_oauth_creds)
-    thread.start()
-    thread.join()
+    # thread = Thread.thread("scheduler thread", "1", restore_oauth_creds)
+    # thread.start()
+    # thread.join()
 
 

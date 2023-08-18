@@ -105,8 +105,8 @@ def create_task(tasklist_id: str, task_body: dict, task_id: str=None, prev_key: 
                 'deleted': task_body.get('deleted') if task_body.get('deleted') else None,
                 'status': task_body.get('status') if task_body.get('status') else None
             },
-            previous = None if not prev_key else prev_key,
-            parent = None if not task_id else task_id
+            previous = prev_key,
+            parent = task_id
     ).execute()
     return task_info.get('id')
 
