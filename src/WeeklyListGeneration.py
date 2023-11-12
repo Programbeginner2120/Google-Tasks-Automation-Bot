@@ -21,7 +21,7 @@ def get_month_day_year_time():
     current_date = current_date.strftime("%m/%d/%y")
     return current_date
 
-@repeat(every().saturday.at("16:14"))
+@repeat(every().sunday.at("20:00"))
 # @repeat(every(2).seconds)
 def create_weekly_daily_task_list():
     """
